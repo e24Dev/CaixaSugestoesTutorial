@@ -1,5 +1,7 @@
 # Aula 1 — API, banco e CRUD
 
+> **Antes de começar:** siga o [guia de preparação do ambiente Java no Windows](https://github.com/e24Dev/CaixaDeSugestoes/blob/main/docs/ambiente-windows.md). Ele explica a instalação do JDK 17 e do IntelliJ, a configuração de `JAVA_HOME`, `Path` e `GRADLE_USER_HOME`, a organização das pastas e a seleção do Java usado pelo Gradle na IDE. Confira que `java -version` e `javac -version` mostram Java 17 antes de continuar. Quando o guia solicitar a criação do projeto, retorne a esta aula e siga a seção **Projeto e ambiente**.
+
 As atividades podem ser continuadas após a aula. Siga a sequência e retome do último checkpoint concluído.
 
 Prepare Windows, PowerShell, JDK 17, IntelliJ, XAMPP e Insomnia antes da aula. Não é necessário iniciar Apache para a API; ele é usado pelo phpMyAdmin.
