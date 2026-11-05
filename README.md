@@ -8,7 +8,9 @@ Prepare Windows, PowerShell, JDK 17, IntelliJ, XAMPP e Insomnia antes da aula. N
 
 ## 1. Projeto e ambiente
 
-No Spring Initializr, gere Gradle Groovy, Java 17, JAR, Spring Web, group `br.com.etecalbertoferes`, artifact/name `CaixaDeSugestoes`, package `br.com.etecalbertoferes.CaixaDeSugestoes`. Extraia em `C:\dev\projetos\CaixaDeSugestoes` e abra a pasta do build.gradle no IntelliJ. Configure SDK e Gradle JVM com Java 17. Preserve o Wrapper binário gerado. Apague application.properties e o teste de contexto gerados; serão substituídos pelos arquivos abaixo.
+No Spring Initializr, gere Gradle Groovy, Java 17, JAR, com aa dependencias abaixo, group `br.com.etecalbertoferes`, artifact/name `CaixaDeSugestoes`, package `br.com.etecalbertoferes.CaixaDeSugestoes`, configuration `YAML`. Extraia em `C:\dev\projetos\CaixaDeSugestoes` e abra a pasta do build.gradle no IntelliJ. Configure SDK e Gradle JVM com Java 17. Preserve o Wrapper binário gerado. Apague application.properties e o teste de contexto gerados; serão substituídos pelos arquivos abaixo.
+
+<img src="assets/images/spring-initializer.png" height="480">
 
 ## 2. Banco e persistência
 
@@ -41,118 +43,11 @@ O caminho acima de cada bloco identifica o arquivo exato. Não cole todos os blo
 - [Etapa 7: Contrato HTTP e documentação](#etapa-7)
 - [Etapa 8: Testes automatizados](#etapa-8)
 
-<a id="etapa-1"></a>
-
-## Etapa 1 — Projeto e dependências
-
-### `.gitignore`
-
-Crie este arquivo. Arquivo de suporte necessário para executar o projeto com a configuração desta aula.
-
-```text
-HELP.md
-.gradle
-build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
-
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-out/
-!**/src/main/**/out/
-!**/src/test/**/out/
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-
-### VS Code ###
-.vscode/
-
-# Configuração local
-.env
-.env.*
-!.env.example
-```
-
-### `build.gradle`
-
-Crie este arquivo. Define plugins e bibliotecas. Depois de salvar, clique em Reload All Gradle Projects no IntelliJ.
-
-```groovy
-plugins {
-    id 'java'
-    id 'org.springframework.boot' version '4.1.1'
-    id 'io.spring.dependency-management' version '1.1.7'
-}
-group = 'br.com.etecalbertoferes'
-version = '0.0.1-SNAPSHOT'
-java { toolchain { languageVersion = JavaLanguageVersion.of(17) } }
-repositories { mavenCentral() }
-dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.1'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-flyway'
-    implementation 'org.flywaydb:flyway-mysql'
-    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
-    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-}
-tasks.named('test') { useJUnitPlatform() }
-```
-
-### `settings.gradle`
-
-Crie este arquivo. Fixa o nome do projeto e do JAR gerado.
-
-```groovy
-rootProject.name = 'CaixaDeSugestoes'
-```
-
-### `src/main/java/br/com/etecalbertoferes/CaixaDeSugestoes/CaixaDeSugestoesApplication.java`
-
-Crie este arquivo. Arquivo de suporte necessário para executar o projeto com a configuração desta aula.
-
-```java
-package br.com.etecalbertoferes.CaixaDeSugestoes;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-@SpringBootApplication
-public class CaixaDeSugestoesApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(CaixaDeSugestoesApplication.class, args);
-    }
-}
-```
-
 **Checkpoint de organização:** confira caminhos, nomes e packages deste grupo antes de continuar. A execução completa está no roteiro abaixo.
 
-<a id="etapa-2"></a>
+<a id="etapa-1"></a>
 
-## Etapa 2 — Conexão e migrations
+## Etapa 1 — Conexão e migrations
 
 Crie db/migration dentro de resources. Os nomes V1__ e V2__ usam dois underscores. Flyway registra cada versão em flyway_schema_history; após aplicar, crie uma nova migration para evoluir o schema. Hibernate com validate confere as tabelas e não as recria.
 
@@ -231,9 +126,9 @@ INSERT INTO categories(name) VALUES ('Sugestão'), ('Crítica'), ('Elogio');
 
 **Checkpoint de organização:** confira caminhos, nomes e packages deste grupo antes de continuar. A execução completa está no roteiro abaixo.
 
-<a id="etapa-3"></a>
+<a id="etapa-2"></a>
 
-## Etapa 3 — Domínio e contratos
+## Etapa 2 — Domínio e contratos
 
 ### `src/main/java/br/com/etecalbertoferes/CaixaDeSugestoes/domain/Category.java`
 
@@ -328,9 +223,9 @@ public interface SuggestionRepository {
 
 **Checkpoint de organização:** confira caminhos, nomes e packages deste grupo antes de continuar. A execução completa está no roteiro abaixo.
 
-<a id="etapa-4"></a>
+<a id="etapa-3"></a>
 
-## Etapa 4 — Persistência JPA
+## Etapa 3 — Persistência JPA
 
 ### `src/main/java/br/com/etecalbertoferes/CaixaDeSugestoes/infrastructure/persistence/CategoryEntity.java`
 
@@ -546,9 +441,9 @@ public class SuggestionPersistenceAdapter implements SuggestionRepository {
 
 **Checkpoint de organização:** confira caminhos, nomes e packages deste grupo antes de continuar. A execução completa está no roteiro abaixo.
 
-<a id="etapa-5"></a>
+<a id="etapa-4"></a>
 
-## Etapa 5 — Casos de uso
+## Etapa 4 — Casos de uso
 
 ### `src/main/java/br/com/etecalbertoferes/CaixaDeSugestoes/application/CatalogService.java`
 
@@ -718,9 +613,9 @@ class SuggestionServiceTest {
 
 **Checkpoint de organização:** confira caminhos, nomes e packages deste grupo antes de continuar. A execução completa está no roteiro abaixo.
 
-<a id="etapa-7"></a>
+<a id="etapa-5"></a>
 
-## Etapa 7 — Contrato HTTP e documentação
+## Etapa 5 — Contrato HTTP e documentação
 
 ### `src/main/java/br/com/etecalbertoferes/CaixaDeSugestoes/interfaces/rest/ApiError.java`
 
@@ -959,9 +854,9 @@ public record SuggestionResponse(Long id, String title, String content, @Schema(
 
 **Checkpoint de organização:** confira caminhos, nomes e packages deste grupo antes de continuar. A execução completa está no roteiro abaixo.
 
-<a id="etapa-8"></a>
+<a id="etapa-6"></a>
 
-## Etapa 8 — Testes automatizados
+## Etapa 6 — Testes automatizados
 
 ### `src/test/java/br/com/etecalbertoferes/CaixaDeSugestoes/ApiIntegrationTest.java`
 
