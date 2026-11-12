@@ -8,9 +8,67 @@ Prepare Windows, PowerShell, JDK 17, IntelliJ, XAMPP e Insomnia antes da aula. N
 
 ## 1. Projeto e ambiente
 
-No Spring Initializr, gere Gradle Groovy, Java 17, JAR, com as dependências abaixo, group `br.com.etecalbertoferes`, artifact/name `CaixaDeSugestoes`, package `br.com.etecalbertoferes.CaixaDeSugestoes`, configuration `YAML`. Extraia em `C:\dev\projetos\CaixaDeSugestoes` e abra a pasta do build.gradle no IntelliJ. Configure SDK e Gradle JVM com Java 17. Preserve o Wrapper binário gerado. Apague application.properties e o teste de contexto gerados; serão substituídos pelos arquivos abaixo.
+No Spring Initializr, gere Gradle Groovy, Java 17, JAR, com Spring Web, Validation, Spring Data JPA e Flyway Migration, group `br.com.etecalbertoferes`, artifact/name `CaixaDeSugestoes`, package `br.com.etecalbertoferes.CaixaDeSugestoes`, configuration `YAML`; as dependências exatas estão no build.gradle abaixo. Extraia em `C:\dev\projetos\CaixaDeSugestoes` e abra a pasta do build.gradle no IntelliJ. Configure SDK e Gradle JVM com Java 17. Preserve o Wrapper binário gerado. Apague application.properties e o teste de contexto gerados; serão substituídos pelos arquivos abaixo.
 
 <img src="assets/images/spring-initializer.png" height="480">
+
+## Arquivos de configuração do projeto
+
+A seleção no gerador pode variar. Use estes arquivos completos para fixar as dependências da aula. Não acrescente Security nesta primeira atividade. Recarregue o Gradle depois de salvar.
+
+### `build.gradle`
+
+Crie ou substitua o conteúdo inteiro.
+
+```groovy
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '4.1.1'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+group = 'br.com.etecalbertoferes'
+version = '0.0.1-SNAPSHOT'
+java { toolchain { languageVersion = JavaLanguageVersion.of(17) } }
+repositories { mavenCentral() }
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.1'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-flyway'
+    implementation 'org.flywaydb:flyway-mysql'
+    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+tasks.named('test') { useJUnitPlatform() }
+```
+
+### `settings.gradle`
+
+Crie ou substitua o conteúdo inteiro.
+
+```groovy
+rootProject.name = 'CaixaDeSugestoes'
+```
+
+### `src/main/java/br/com/etecalbertoferes/CaixaDeSugestoes/CaixaDeSugestoesApplication.java`
+
+Crie ou substitua o conteúdo inteiro.
+
+```java
+package br.com.etecalbertoferes.CaixaDeSugestoes;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class CaixaDeSugestoesApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(CaixaDeSugestoesApplication.class, args);
+    }
+}
+```
 
 ## 2. Banco e persistência
 

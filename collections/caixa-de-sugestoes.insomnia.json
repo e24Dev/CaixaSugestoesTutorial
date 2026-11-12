@@ -8,7 +8,7 @@
       "_id": "wrk_caixa",
       "_type": "workspace",
       "name": "Caixa de Sugestões — JWT Admin",
-      "description": "Administrador cadastrado no MariaDB do XAMPP por --setup-admin. A chave JWT é criada automaticamente no servidor. Preencha adminUsername/adminPassword somente no cliente local; login captura accessToken. Execute em ordem, sem exportar credenciais ou tokens reais.",
+      "description": "Administrador didático no PostgreSQL pela migration V4: admin / Admin@123456. A chave JWT é criada automaticamente no servidor. Login salva accessToken no ambiente. Execute em ordem.",
       "scope": "collection"
     },
     {
@@ -17,9 +17,9 @@
       "parentId": "wrk_caixa",
       "name": "Base Environment",
       "data": {
-        "baseUrl": "http://localhost:8000",
-        "adminUsername": "",
-        "adminPassword": "",
+        "baseUrl": "http://localhost:8080",
+        "adminUsername": "admin",
+        "adminPassword": "Admin@123456",
         "accessToken": "",
         "courseId": "",
         "categoryId": "",
@@ -28,9 +28,99 @@
       }
     },
     {
+      "_id": "fld_caixa_1",
+      "_type": "request_group",
+      "parentId": "wrk_caixa",
+      "name": "01 - Catálogos",
+      "description": "Consulta dos cursos e categorias usados no cadastro.",
+      "environment": {},
+      "metaSortKey": 1
+    },
+    {
+      "_id": "fld_caixa_2",
+      "_type": "request_group",
+      "parentId": "wrk_caixa",
+      "name": "02 - Autenticação",
+      "description": "Login administrativo e rejeição de credenciais inválidas.",
+      "environment": {},
+      "metaSortKey": 2
+    },
+    {
+      "_id": "fld_caixa_3",
+      "_type": "request_group",
+      "parentId": "wrk_caixa",
+      "name": "03 - Sugestões",
+      "description": "Fluxo completo: cadastro, controle de acesso, consultas, atualização, validação e exclusão.",
+      "environment": {},
+      "metaSortKey": 3
+    },
+    {
+      "_id": "fld_caixa_3_1",
+      "_type": "request_group",
+      "parentId": "fld_caixa_3",
+      "name": "01 - Cadastro",
+      "description": "Cria a sugestão usada nas próximas requisições.",
+      "environment": {},
+      "metaSortKey": 1
+    },
+    {
+      "_id": "fld_caixa_3_2",
+      "_type": "request_group",
+      "parentId": "fld_caixa_3",
+      "name": "02 - Controle de acesso",
+      "description": "Verifica o bloqueio de alterações sem autenticação válida.",
+      "environment": {},
+      "metaSortKey": 2
+    },
+    {
+      "_id": "fld_caixa_3_3",
+      "_type": "request_group",
+      "parentId": "fld_caixa_3",
+      "name": "03 - Consultas e filtros",
+      "description": "Consulta, listagem e combinação de filtros.",
+      "environment": {},
+      "metaSortKey": 3
+    },
+    {
+      "_id": "fld_caixa_3_4",
+      "_type": "request_group",
+      "parentId": "fld_caixa_3",
+      "name": "04 - Atualização",
+      "description": "Atualiza a sugestão com o token administrativo.",
+      "environment": {},
+      "metaSortKey": 4
+    },
+    {
+      "_id": "fld_caixa_3_5",
+      "_type": "request_group",
+      "parentId": "fld_caixa_3",
+      "name": "05 - Validação e erros",
+      "description": "Entradas inválidas, referências inexistentes e erros HTTP.",
+      "environment": {},
+      "metaSortKey": 5
+    },
+    {
+      "_id": "fld_caixa_3_6",
+      "_type": "request_group",
+      "parentId": "fld_caixa_3",
+      "name": "06 - Exclusão",
+      "description": "Remove a sugestão criada e verifica as operações posteriores.",
+      "environment": {},
+      "metaSortKey": 6
+    },
+    {
+      "_id": "fld_caixa_4",
+      "_type": "request_group",
+      "parentId": "wrk_caixa",
+      "name": "04 - Documentação",
+      "description": "Contrato OpenAPI da API.",
+      "environment": {},
+      "metaSortKey": 4
+    },
+    {
       "_id": "req_caixa_1",
       "_type": "request",
-      "parentId": "wrk_caixa",
+      "parentId": "fld_caixa_1",
       "name": "01 - Consultar cursos",
       "method": "GET",
       "url": "{{ _.baseUrl }}/api/courses",
@@ -46,7 +136,7 @@
     {
       "_id": "req_caixa_2",
       "_type": "request",
-      "parentId": "wrk_caixa",
+      "parentId": "fld_caixa_1",
       "name": "02 - Consultar categorias",
       "method": "GET",
       "url": "{{ _.baseUrl }}/api/categories",
@@ -62,7 +152,7 @@
     {
       "_id": "req_caixa_3",
       "_type": "request",
-      "parentId": "wrk_caixa",
+      "parentId": "fld_caixa_2",
       "name": "03 - Login do administrador",
       "method": "POST",
       "url": "{{ _.baseUrl }}/api/auth/login",
@@ -79,14 +169,14 @@
       },
       "authentication": {},
       "preRequestScript": "insomnia.environment.set('loginBody', JSON.stringify({username: insomnia.environment.get('adminUsername'), password: insomnia.environment.get('adminPassword')}));",
-      "afterResponseScript": "insomnia.test('HTTP 200', () => insomnia.expect(insomnia.response.code).to.eql(200));\nif (insomnia.response.code === 200) {\n  const data = insomnia.response.json();\n  insomnia.test('Contrato e atualização do token', () => {\n    insomnia.expect(data.tokenType).to.eql('Bearer');\n    insomnia.expect(data.accessToken).to.be.a('string').and.not.empty;\n    insomnia.expect(data.expiresIn).to.be.a('number').and.above(0);\n    insomnia.environment.set('accessToken', data.accessToken);\n    insomnia.expect(insomnia.environment.get('accessToken')).to.eql(data.accessToken);\n  });\n}",
+      "afterResponseScript": "// Remove o token anterior para não reutilizá-lo se o login falhar.\ninsomnia.environment.set('accessToken', '');\ninsomnia.test('HTTP 200', () => insomnia.expect(insomnia.response.code).to.eql(200));\nif (insomnia.response.code === 200) {\n  const data = insomnia.response.json();\n  insomnia.test('Contrato do login', () => {\n    insomnia.expect(data.tokenType).to.eql('Bearer');\n    insomnia.expect(data.accessToken).to.be.a('string');\n    insomnia.expect(data.expiresIn).to.be.a('number');\n  });\n  if (data.tokenType === 'Bearer' && typeof data.accessToken === 'string' && data.accessToken.length > 0) {\n    insomnia.environment.set('accessToken', data.accessToken);\n  }\n}\n",
       "metaSortKey": 3,
-      "description": "Esperado: HTTP 200. Valida o contrato e substitui accessToken no ambiente selecionado pelo token retornado. Repita esta requisição quando o token expirar; as requisições protegidas usam o valor atualizado."
+      "description": "Esperado: HTTP 200. Scripts > After-response salva accessToken no ambiente selecionado. As requisições protegidas usam Authorization: Bearer {{ _.accessToken }}."
     },
     {
       "_id": "req_caixa_4",
       "_type": "request",
-      "parentId": "wrk_caixa",
+      "parentId": "fld_caixa_2",
       "name": "04 - Rejeitar senha incorreta",
       "method": "POST",
       "url": "{{ _.baseUrl }}/api/auth/login",
@@ -110,7 +200,7 @@
     {
       "_id": "req_caixa_5",
       "_type": "request",
-      "parentId": "wrk_caixa",
+      "parentId": "fld_caixa_2",
       "name": "05 - Rejeitar login vazio",
       "method": "POST",
       "url": "{{ _.baseUrl }}/api/auth/login",
@@ -134,7 +224,7 @@
     {
       "_id": "req_caixa_6",
       "_type": "request",
-      "parentId": "wrk_caixa",
+      "parentId": "fld_caixa_3_1",
       "name": "06 - Criar sugestão identificada",
       "method": "POST",
       "url": "{{ _.baseUrl }}/api/suggestions",
@@ -158,7 +248,7 @@
     {
       "_id": "req_caixa_7",
       "_type": "request",
-      "parentId": "wrk_caixa",
+      "parentId": "fld_caixa_3_2",
       "name": "07 - Bloquear alteração sem token",
       "method": "PUT",
       "url": "{{ _.baseUrl }}/api/suggestions/{{ _.suggestionId }}",
@@ -182,7 +272,7 @@
     {
       "_id": "req_caixa_8",
       "_type": "request",
-      "parentId": "wrk_caixa",
+      "parentId": "fld_caixa_3_2",
       "name": "08 - Bloquear exclusão sem token",
       "method": "DELETE",
       "url": "{{ _.baseUrl }}/api/suggestions/{{ _.suggestionId }}",
@@ -198,7 +288,7 @@
     {
       "_id": "req_caixa_9",
       "_type": "request",
-      "parentId": "wrk_caixa",
+      "parentId": "fld_caixa_3_2",
       "name": "09 - Bloquear token inválido",
       "method": "DELETE",
       "url": "{{ _.baseUrl }}/api/suggestions/{{ _.suggestionId }}",
@@ -219,7 +309,7 @@
     {
       "_id": "req_caixa_10",
       "_type": "request",
-      "parentId": "wrk_caixa",
+      "parentId": "fld_caixa_3_3",
       "name": "10 - Consultar sugestão",
       "method": "GET",
       "url": "{{ _.baseUrl }}/api/suggestions/{{ _.suggestionId }}",
@@ -235,7 +325,7 @@
     {
       "_id": "req_caixa_11",
       "_type": "request",
-      "parentId": "wrk_caixa",
+      "parentId": "fld_caixa_3_3",
       "name": "11 - Listar sugestões",
       "method": "GET",
       "url": "{{ _.baseUrl }}/api/suggestions",
@@ -251,7 +341,7 @@
     {
       "_id": "req_caixa_12",
       "_type": "request",
-      "parentId": "wrk_caixa",
+      "parentId": "fld_caixa_3_3",
       "name": "12 - Filtrar por curso",
       "method": "GET",
       "url": "{{ _.baseUrl }}/api/suggestions",
@@ -273,7 +363,7 @@
     {
       "_id": "req_caixa_13",
       "_type": "request",
-      "parentId": "wrk_caixa",
+      "parentId": "fld_caixa_3_3",
       "name": "13 - Filtrar por categoria",
       "method": "GET",
       "url": "{{ _.baseUrl }}/api/suggestions",
@@ -295,7 +385,7 @@
     {
       "_id": "req_caixa_14",
       "_type": "request",
-      "parentId": "wrk_caixa",
+      "parentId": "fld_caixa_3_3",
       "name": "14 - Buscar texto literal e combinar filtros",
       "method": "GET",
       "url": "{{ _.baseUrl }}/api/suggestions",
@@ -327,7 +417,7 @@
     {
       "_id": "req_caixa_15",
       "_type": "request",
-      "parentId": "wrk_caixa",
+      "parentId": "fld_caixa_3_3",
       "name": "15 - Filtro sem resultado",
       "method": "GET",
       "url": "{{ _.baseUrl }}/api/suggestions",
@@ -349,7 +439,7 @@
     {
       "_id": "req_caixa_16",
       "_type": "request",
-      "parentId": "wrk_caixa",
+      "parentId": "fld_caixa_3_4",
       "name": "16 - Atualizar para anônima",
       "method": "PUT",
       "url": "{{ _.baseUrl }}/api/suggestions/{{ _.suggestionId }}",
@@ -377,7 +467,7 @@
     {
       "_id": "req_caixa_17",
       "_type": "request",
-      "parentId": "wrk_caixa",
+      "parentId": "fld_caixa_3_5",
       "name": "17 - Rejeitar campos inválidos",
       "method": "POST",
       "url": "{{ _.baseUrl }}/api/suggestions",
@@ -401,7 +491,7 @@
     {
       "_id": "req_caixa_18",
       "_type": "request",
-      "parentId": "wrk_caixa",
+      "parentId": "fld_caixa_3_5",
       "name": "18 - Rejeitar filtro inválido",
       "method": "GET",
       "url": "{{ _.baseUrl }}/api/suggestions",
@@ -423,7 +513,7 @@
     {
       "_id": "req_caixa_19",
       "_type": "request",
-      "parentId": "wrk_caixa",
+      "parentId": "fld_caixa_3_5",
       "name": "19 - Rejeitar ID inválido",
       "method": "GET",
       "url": "{{ _.baseUrl }}/api/suggestions/abc",
@@ -439,7 +529,7 @@
     {
       "_id": "req_caixa_20",
       "_type": "request",
-      "parentId": "wrk_caixa",
+      "parentId": "fld_caixa_3_5",
       "name": "20 - Categoria inexistente",
       "method": "POST",
       "url": "{{ _.baseUrl }}/api/suggestions",
@@ -463,7 +553,7 @@
     {
       "_id": "req_caixa_21",
       "_type": "request",
-      "parentId": "wrk_caixa",
+      "parentId": "fld_caixa_3_5",
       "name": "21 - Curso inexistente",
       "method": "POST",
       "url": "{{ _.baseUrl }}/api/suggestions",
@@ -487,7 +577,7 @@
     {
       "_id": "req_caixa_22",
       "_type": "request",
-      "parentId": "wrk_caixa",
+      "parentId": "fld_caixa_3_5",
       "name": "22 - JSON truncado",
       "method": "POST",
       "url": "{{ _.baseUrl }}/api/suggestions",
@@ -511,7 +601,7 @@
     {
       "_id": "req_caixa_23",
       "_type": "request",
-      "parentId": "wrk_caixa",
+      "parentId": "fld_caixa_3_5",
       "name": "23 - Método não permitido",
       "method": "PATCH",
       "url": "{{ _.baseUrl }}/api/suggestions/{{ _.suggestionId }}",
@@ -535,7 +625,7 @@
     {
       "_id": "req_caixa_24",
       "_type": "request",
-      "parentId": "wrk_caixa",
+      "parentId": "fld_caixa_3_5",
       "name": "24 - Tipo de conteúdo inválido",
       "method": "POST",
       "url": "{{ _.baseUrl }}/api/suggestions",
@@ -559,7 +649,7 @@
     {
       "_id": "req_caixa_25",
       "_type": "request",
-      "parentId": "wrk_caixa",
+      "parentId": "fld_caixa_3_6",
       "name": "25 - Excluir sugestão",
       "method": "DELETE",
       "url": "{{ _.baseUrl }}/api/suggestions/{{ _.suggestionId }}",
@@ -580,7 +670,7 @@
     {
       "_id": "req_caixa_26",
       "_type": "request",
-      "parentId": "wrk_caixa",
+      "parentId": "fld_caixa_3_6",
       "name": "26 - Confirmar exclusão",
       "method": "GET",
       "url": "{{ _.baseUrl }}/api/suggestions/{{ _.suggestionId }}",
@@ -596,7 +686,7 @@
     {
       "_id": "req_caixa_27",
       "_type": "request",
-      "parentId": "wrk_caixa",
+      "parentId": "fld_caixa_3_6",
       "name": "27 - Repetir exclusão",
       "method": "DELETE",
       "url": "{{ _.baseUrl }}/api/suggestions/{{ _.suggestionId }}",
@@ -617,7 +707,7 @@
     {
       "_id": "req_caixa_28",
       "_type": "request",
-      "parentId": "wrk_caixa",
+      "parentId": "fld_caixa_3_6",
       "name": "28 - Atualizar excluída",
       "method": "PUT",
       "url": "{{ _.baseUrl }}/api/suggestions/{{ _.suggestionId }}",
@@ -645,7 +735,7 @@
     {
       "_id": "req_caixa_29",
       "_type": "request",
-      "parentId": "wrk_caixa",
+      "parentId": "fld_caixa_4",
       "name": "29 - OpenAPI JSON",
       "method": "GET",
       "url": "{{ _.baseUrl }}/v3/api-docs",

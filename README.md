@@ -5,6 +5,6 @@ Construa uma API de caixa de sugestões com Java 17, Spring Boot e MariaDB do XA
 ## Atividades
 
 1. [Aula 1 — API, banco e CRUD](01-api-banco-crud.md): prepare o ambiente, crie os bancos e as migrations, implemente as camadas da API e valide o cadastro, a consulta, a alteração e a exclusão de sugestões com testes automatizados e requisições manuais.
-2. [Aula 2 — Administrador, JWT e Insomnia](02-seguranca-jwt-insomnia.md): cadastre o administrador, implemente o login com JWT, proteja as operações de alteração e exclusão e execute a collection de 29 requisições, com captura automática do token após o login.
+2. [Aula 2 — Administrador, JWT e Insomnia](02-seguranca-jwt-insomnia.md): crie a conta administrativa pela migration V4, implemente o login com JWT, proteja as operações de alteração e exclusão e execute a collection de 29 requisições, com captura automática do token após o login.
 
 Antes de começar, siga o guia de preparação do ambiente indicado na primeira aula. Cada atividade apresenta os caminhos dos arquivos, os blocos completos de código, os comandos de execução e os checkpoints de validação.
